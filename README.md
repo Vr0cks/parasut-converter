@@ -10,7 +10,7 @@ Aynı sorunu yaşayan varsa işine yarar.
 
 Uyumsoft'un **Giden** ve **Gelen Faturalar** Excel çıktılarını alıp Paraşüt'ün içe aktarma şablonlarına dönüştürüyor.
 
-Basit ama sinir bozucu detayları hallediyor:
+Basit  detayları hallediyor:
 - Sütun isimlerini eşliyor (`Alıcı` → `MÜŞTERİ ÜNVANI`, `Gönderici` → `Tedarikçi` vs.)
 - Tarihleri string'den gerçek Excel datetime nesnesine çeviriyor (Paraşüt metin kabul etmiyor)
 - TRL faturalarda döviz kuru alanını boş bırakıyor (dolu olursa hata veriyor)
