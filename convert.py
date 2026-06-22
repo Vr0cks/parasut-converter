@@ -9,7 +9,6 @@ Kullanım:
 import argparse
 import sys
 import pandas as pd
-import openpyxl
 from openpyxl import load_workbook
 
 # ── Argümanlar ────────────────────────────────────────────────────────────────
