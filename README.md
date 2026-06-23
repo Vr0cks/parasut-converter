@@ -90,4 +90,4 @@ Program size hangi tür faturaları silmek istediğinizi soracak ve işlem bitti
 
 ---
 
-Developed by [vr0cks](https://github.com/Vr0cks)
+Developed by [vr0cks](https://www.vr0cks.com/tr)
