@@ -1,4 +1,4 @@
-# Excel dosyaları (hassas veri içerebilir, repoya ekleme)
+# Excel dosyaları 
 *.xlsx
 *.xls
 *.csv
