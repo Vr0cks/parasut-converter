@@ -99,6 +99,10 @@ for i, row in df.iterrows():
         tutar = None
         hata_sayisi += 1
 
+    # Uyumsoft'tan KDV oranları gelmediği için Paraşüt'ün ekstra KDV eklemesini engellemek adına %0 KDV gönderiyoruz.
+    # Böylece BİRİM FİYATI direkt Ödenecek Tutar (KDV dahil) oluyor ve toplamlar milimi milimine tutuyor.
+    kdvsiz_tutar = tutar
+
     ws.cell(excel_row,  1, musteri)
     ws.cell(excel_row,  2, fatura_no)   # Uyumsoft fatura kodunu FATURA İSMİ'ne koy
     tarih_cell = ws.cell(excel_row, 3, tarih_obj)
@@ -116,9 +120,9 @@ for i, row in df.iterrows():
     ws.cell(excel_row, 13, None)        # HİZMET/ÜRÜN AÇIKLAMASI
     ws.cell(excel_row, 14, None)        # ÇIKIŞ DEPOSU
     ws.cell(excel_row, 15, 1)           # MİKTAR
-    ws.cell(excel_row, 16, tutar)       # BİRİM FİYATI
+    ws.cell(excel_row, 16, kdvsiz_tutar)# BİRİM FİYATI (KDV dahil gönderiliyor)
     ws.cell(excel_row, 17, None)        # İNDİRİM TUTARI
-    ws.cell(excel_row, 18, 20)          # KDV ORANI (%)
+    ws.cell(excel_row, 18, 0)           # KDV ORANI (%) -> 0 yapıyoruz ki Paraşüt üstüne KDV eklemesin
     ws.cell(excel_row, 19, None)        # ÖİV ORANI
     ws.cell(excel_row, 20, None)        # KONAKLAMA VERGİSİ ORANI
 

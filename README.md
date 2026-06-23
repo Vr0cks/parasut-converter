@@ -66,10 +66,27 @@ Paraşüt → Alış Faturaları → İçeri Aktar → **Şablonu Geri Yükle**
 ## Notlar
 
 - Tüm faturalar TRL olarak işleniyor
-- Giden faturalar: KDV `%20` sabit — farklıysa `convert.py` içinde değiştir
+- Giden faturalar: KDV `%20` sabit — Paraşüt birim fiyatı otomatik KDV'li yapmasın diye `Tutar / 1.20` şeklinde hesaplanarak (KDV hariç) aktarılır. Farklıysa `convert.py` içinde değiştirin.
 - Vade tarihi boş bırakılıyor → açık fatura olarak giriyor
 - Fatura sıra no boş → Paraşüt otomatik atıyor
-- Gelen faturalarda "Toplam KDV" sütunu Uyumsoft export'unda boş geliyorsa Paraşüt kendi hesaplıyor
+- Gelen faturalarda "Toplam KDV" sütunu otomatik hesaplanır, "Toplam Tutar" KDV dahil tutar olarak gönderilir.
+
+---
+
+## Ekstra: Yanlış Yüklenen Faturaları Toplu Silme Aracı (`delete_invoices.py`)
+
+Paraşüt web arayüzünde "Tümünü Seç" ile 90 sayfa faturayı tek tek silmek tam bir eziyettir. Yanlış bir yükleme yaparsanız Paraşüt API'sini kullanarak hepsini tek tuşla silebilirsiniz.
+
+**Kurulum:**
+1. Paraşüt destek ekibinden API anahtarlarınızı isteyin.
+2. `.env.example` dosyasının kopyasını oluşturup adını `.env` yapın.
+3. İçindeki bilgileri kendi hesap bilgilerinize göre doldurun.
+
+**Kullanım:**
+```bash
+python delete_invoices.py
+```
+Program size hangi tür faturaları silmek istediğinizi soracak ve işlem bittikten sonra silecektir.
 
 ---
 

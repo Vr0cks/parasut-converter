@@ -102,6 +102,9 @@ for i, row in df.iterrows():
         tutar = None
         hata_sayisi += 1
 
+    # Uyumsoft'tan KDV oranları gelmediği için Paraşüt'ün ekstra KDV eklemesini engellemek adına KDV'yi 0 gönderiyoruz.
+    kdv_tutari = 0 if tutar is not None else None
+
     # Fiş / Fatura Tarihi
     tarih_cell = ws.cell(excel_row, 1, tarih_obj)
     if tarih_obj:
@@ -114,8 +117,8 @@ for i, row in df.iterrows():
     ws.cell(excel_row,  6, 'TRL')       # Döviz tipi
     ws.cell(excel_row,  7, None)        # Döviz Kuru → TRL'de boş
     ws.cell(excel_row,  8, None)        # Son Ödeme tarihi → boş = ödenecek
-    ws.cell(excel_row,  9, None)        # Toplam KDV → hesaplanmıyor, Paraşüt halleder
-    ws.cell(excel_row, 10, tutar)       # Toplam Tutar (KDV dahil)
+    ws.cell(excel_row,  9, kdv_tutari)  # Toplam KDV -> 0 yapıyoruz
+    ws.cell(excel_row, 10, tutar)       # Toplam Tutar (KDV dahil gönderiliyor)
     ws.cell(excel_row, 11, 'Ödenecek') # Ödeme Durumu
     ws.cell(excel_row, 12, None)        # Ödeme Hesabı → boş
 
