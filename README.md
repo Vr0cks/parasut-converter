@@ -1,93 +1,77 @@
-# parasut-converter
+# Paraşüt Göç ve Yönetim Asistanı 🚀
 
-Şirketimiz Uyumsoft'tan Paraşüt'e geçerken fatura aktarımında ciddi bir zaman kaybı yaşıyordu. İki platformun şablonları birbiriyle uyumlu olmadığı için 4.700+ faturayı manuel girmek gerekiyordu. Bunu otomatikleştirmek için yazdım.
+Şirketiniz Uyumsoft (veya başka bir ön muhasebe programından) Paraşüt'e geçerken fatura aktarımında ve bakiye eşitlemede ciddi zaman kayıpları yaşıyorsa, bu açık kaynak kodlu araç tam size göre!
 
-Aynı sorunu yaşayan varsa işine yarar.
+Başlangıçta sadece şablon çevirici olarak tasarlanan bu araç, artık **API entegrasyonuna sahip, tam teşekküllü bir Paraşüt Yönetim Asistanı** haline geldi. 
+
+Bu araç sayesinde saatler sürecek işlemleri saniyeler içinde halledebilir, muhasebecinizin hayatını kurtarabilirsiniz. 😎
 
 ---
 
-## Ne yapıyor?
+## 🛠️ Özellikler (Menü İçeriği)
 
-Uyumsoft'un **Giden** ve **Gelen Faturalar** Excel çıktılarını alıp Paraşüt'ün içe aktarma şablonlarına dönüştürüyor.
+Programı çalıştırdığınızda karşınıza çıkan interaktif menü ile şu işlemleri tek tuşla yapabilirsiniz:
 
-Basit  detayları hallediyor:
-- Sütun isimlerini eşliyor (`Alıcı` → `MÜŞTERİ ÜNVANI`, `Gönderici` → `Tedarikçi` vs.)
-- Tarihleri string'den gerçek Excel datetime nesnesine çeviriyor (Paraşüt metin kabul etmiyor)
-- TRL faturalarda döviz kuru alanını boş bırakıyor (dolu olursa hata veriyor)
-- Şablonun içindeki örnek satırları temizliyor
-- VKN/TCKN ve Fatura No'daki baştaki `'` karakterini siliyor
+1. **Uyumsoft Faturalarını Dönüştür:** Uyumsoft "Gelen" ve "Giden" fatura Excel çıktılarını alır, Paraşüt'ün milimetrik şablon formatlarına (tarihler, sütunlar vb.) anında çevirir.
+2. **Tüm Faturaları Toplu Sil (Sıfırlama):** Yanlış bir aktarım mı yaptınız? 90 sayfa faturayı Paraşüt panelinden elle silmek işkencedir. Bu modül API kullanarak tüm satış/alış faturalarınızı tek tuşla temizler.
+3. **Mükerrer (Çift) Faturaları Temizle:** İki kez yüklediğiniz faturaları API üzerinden tespit eder (Tutar ve Tarih eşleşmesiyle) ve mükerrer kopyaları otomatik temizler.
+4. **Eksik VKN ve Adresleri Güncelle:** Uyumsoft Cari Excel'indeki Vergi Numarası, TC Kimlik No ve Vergi Dairesi bilgilerini okur, Paraşüt'teki müşterilerinizi API ile bularak eksik bilgilerini günceller.
+5. **Bakiyeleri Karşılaştır ve Düzeltme Faturası Üret:** Paraşüt geçmiş tahsilatları bilemeyeceği için devir bakiyelerini eksik gösterir. Bu araç, Uyumsoft bakiyeleri ile Paraşüt bakiyelerini kuruşu kuruşuna karşılaştırır ve aradaki farkı kapatacak bir "Geçmiş Dönem Bakiye Düzeltmesi" Excel dosyası üretir.
 
-## Kurulum
+---
 
+## ⚙️ Kurulum
+
+Python yüklü olduğundan emin olduktan sonra kütüphaneleri kurun:
 ```bash
-pip install pandas openpyxl
+pip install pandas openpyxl requests python-dotenv
 ```
 
-## Kullanım
+API gerektiren özellikler (2, 3, 4, 5 numaralı işlemler) için bir `.env` dosyası oluşturmanız gereklidir. Proje dizininde bulunan `.env.example` dosyasını kopyalayıp adını `.env` yapın ve içini Paraşüt bilgilerinizle doldurun:
 
-### Giden Faturalar → Paraşüt Satış Faturası
+```env
+PARASUT_CLIENT_ID=sizin_client_id
+PARASUT_CLIENT_SECRET=sizin_secret_id
+PARASUT_USERNAME=parasut_mailiniz@sirket.com
+PARASUT_PASSWORD=parasut_sifreniz
+PARASUT_COMPANY_ID=firma_id_numaraniz
+```
+*(Şifrenizi ve bilgilerinizi ASLA GitHub vb. yerlere commit etmeyin, `.gitignore` dosyasında `.env` satırının bulunduğundan emin olun.)*
 
-**1. Dosyaları hazırla:**
-- Uyumsoft → Raporlar → **Giden Faturalar** → Excel olarak indir
-- Paraşüt → Satış Faturaları → İçeri Aktar → "Excel Şablonunu İndir"
-- İkisini de bu klasöre koy
+---
 
-**2. Çalıştır:**
+## 🚀 Kullanım
+
+Uçbirimi (Terminal) veya Komut Satırını açıp şu komutu çalıştırın:
+
 ```bash
-python convert.py
-# veya özel dosya adlarıyla:
-python convert.py --kaynak "giden.xlsx" --sablon "parasut_satis_sablonu.xlsx" --cikti "yuklenecek.xlsx"
+python parasut_toolkit.py
 ```
 
-**3. Yükle:**  
-Paraşüt → Satış Faturaları → İçeri Aktar → **Şablonu Geri Yükle**
+Karşınıza şöyle şık bir menü çıkacak:
+```text
+==================================================
+    PARAŞÜT GÖÇ VE YÖNETİM ASİSTANI V1.0
+==================================================
 
----
-
-### Gelen Faturalar → Paraşüt Alış Faturası
-
-**1. Dosyaları hazırla:**
-- Uyumsoft → Raporlar → **Gelen Faturalar** → Excel olarak indir
-- Paraşüt → Alış Faturaları → İçeri Aktar → "Excel Şablonunu İndir"
-- İkisini de bu klasöre koy
-
-**2. Çalıştır:**
-```bash
-python convert_gelen.py
-# veya özel dosya adlarıyla:
-python convert_gelen.py --kaynak "gelen.xlsx" --sablon "parasut_alis_sablonu.xlsx" --cikti "gelen_yuklenecek.xlsx"
+[ MENÜ ]
+1. Uyumsoft Faturalarını Dönüştür (Yakında)
+2. Tüm Faturaları Toplu Sil (Sıfırlama)
+3. Mükerrer (Çift) Faturaları Temizle
+4. Uyumsoft'tan Eksik VKN ve Adresleri Çekip Güncelle
+5. Bakiyeleri Karşılaştır ve Düzeltme Faturası Üret
+0. Çıkış
+Lütfen bir işlem seçin (0-5): _
 ```
-
-**3. Yükle:**  
-Paraşüt → Alış Faturaları → İçeri Aktar → **Şablonu Geri Yükle**
+İhtiyacınız olan işlem numarasını tuşlayarak asistanı kullanmaya başlayabilirsiniz!
 
 ---
 
-## Notlar
-
-- Tüm faturalar TRL olarak işleniyor
-- Giden faturalar: KDV `%20` sabit — Paraşüt birim fiyatı otomatik KDV'li yapmasın diye `Tutar / 1.20` şeklinde hesaplanarak (KDV hariç) aktarılır. Farklıysa `convert.py` içinde değiştirin.
-- Vade tarihi boş bırakılıyor → açık fatura olarak giriyor
-- Fatura sıra no boş → Paraşüt otomatik atıyor
-- Gelen faturalarda "Toplam KDV" sütunu otomatik hesaplanır, "Toplam Tutar" KDV dahil tutar olarak gönderilir.
+## 📝 Notlar
+- Bakiye Düzeltme İşlemi (**5. Menü**) için klasörde Uyumsoft'tan aldığınız `cari uyumsoft.xlsx` dosyası, ayrıca `parasut_satis_faturalari (2).xlsx` ve `parasut_fis_faturalari.xlsx` şablonları bulunmalıdır.
+- VKN Güncelleme işlemi (**4. Menü**) de `cari uyumsoft.xlsx` dosyasını baz alır.
 
 ---
 
-## Ekstra: Yanlış Yüklenen Faturaları Toplu Silme Aracı (`delete_invoices.py`)
-
-Paraşüt web arayüzünde "Tümünü Seç" ile 90 sayfa faturayı tek tek silmek tam bir eziyettir. Yanlış bir yükleme yaparsanız Paraşüt API'sini kullanarak hepsini tek tuşla silebilirsiniz.
-
-**Kurulum:**
-1. Paraşüt destek ekibinden API anahtarlarınızı isteyin.
-2. `.env.example` dosyasının kopyasını oluşturup adını `.env` yapın.
-3. İçindeki bilgileri kendi hesap bilgilerinize göre doldurun.
-
-**Kullanım:**
-```bash
-python delete_invoices.py
-```
-Program size hangi tür faturaları silmek istediğinizi soracak ve işlem bittikten sonra silecektir.
-
----
-
-Developed by [vr0cks](https://www.vr0cks.com/tr)
+**Geliştirici:** [vr0cks](https://www.vr0cks.com/tr)
+Açık kaynak olarak yayınlanmıştır. Herhangi bir hata veya öneriniz varsa Issue / Pull Request göndermekten çekinmeyin!
